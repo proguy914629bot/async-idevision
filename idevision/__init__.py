@@ -36,7 +36,7 @@ baseURL = "https://idevision.net"
 Token = ""
 
 class IDevision:
-  def __init__(self, token : str):
+  def __init__(self, token : str = ""):
     self.token = token
     Token = token
     
