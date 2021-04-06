@@ -3,7 +3,7 @@ An Async Wrapper written in python for the IDevision API.
 
 ## How to Install:
 ```sh
-pip install aiohttp && git clone https://github.com/proguy914629bot/async-idevision/
+pip install git+https://github.com/proguy914629bot/async-idevision/
 ```
 
 ## Guide:
