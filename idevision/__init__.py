@@ -30,6 +30,8 @@ def find(predicate, seq):
       return element
   return None
 
+__version__ = "0.9.1"
+
 baseURL = "https://idevision.net"
 Token = ""
 
