@@ -9,7 +9,7 @@ setuptools.setup(
   version = version,
   author = "proguy914629",
   description = "An async wrapper for the IDevision API",
-  long_description = long_descm
+  long_description = long_desc,
   long_description_content_type = "text/markdown",
   url = "https://github.com/proguy914629bot/async-idevision",
   python_requires = ">=3.6",
