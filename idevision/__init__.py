@@ -49,9 +49,6 @@ class Banned(Ratelimit):
   
 class BadRequest(IDevisionException):
   """An Exception when the API has a Bad Request. This is a subclass of idevision.IDevisionException"""
-  
-class MissingRequiredArgument(IDevisionException):
-  """An Exception when a """
 
 class IDevision:
   def __init__(self, token : str = ""):
