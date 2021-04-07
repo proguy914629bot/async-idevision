@@ -43,24 +43,33 @@ def find(predicate, seq):
       return element
   return None
 
-__version__ = "0.9.1"
+__version__ = "0.9.3"
 
 baseURL = "https://idevision.net"
 Token = ""
 
 class IDevisionException(Exception):
   """A Global Exception for the IDevision API."""
+  def __init__(self, *args, **kwargs):
+    return super().__init__(*args, **kwargs)
 
 class BadAuthorization(IDevisionException):
   """An Exception when you are trying to access an API with bad authorization (No Token, Token Invalid, etc). This is a subclass of idevision.IDevisionException"""
+  def __init__(self, endpoint):
+    if len(Token) == 0:
+      return super().__init__("A token is required to access the {} endpoint.")
+    else:
+      return super().__init__("You have passed an invalid token. Your current passed token is {}. You will not be able to access any other required token endpoints such as CDN and OCR if you do not change the current token passed.")
   
 class Ratelimit(IDevisionException):
   """An Exception when you are Ratelimited. This is a subclass of idevision.IDevisionException"""
+  def __init__(self):
+    return super().__init__("You are currently ratelimited from IDevision API. You have recieved a 429 error code. Please follow the Ratelimit rules of IDevision from now on or you might get banned.")
   
 class Banned(Ratelimit):
   """An Exception when you are Banned from the API. This is a subclass of idevision.Ratelimit."""
   def __init__(self):
-    return super().__init__("You are banned from IDevision API. You have recieved a  error code.")
+    return super().__init__("You are banned from IDevision API. You have recieved a 403 error code.")
   
 class BadRequest(IDevisionException):
   """An Exception when the API has raised a Bad Request. This is a subclass of idevision.IDevisionException"""
@@ -91,6 +100,12 @@ class IDevision:
     Token = token
     self.error_codes = errorCodes
     
+  def documentation(self):
+    def idevision():
+      return "https://idevision.net/docs"
+    def async_idevison():
+      return "https://github.com/proguy914629bot/async-idevision/blob/main/DOCUMENTATION.md"
+    
   class rtfs:
     async def __init__(self, query : str, library : str, *, format : str = "links"):
       """
@@ -101,16 +116,20 @@ class IDevision:
       Parameters
       -----------
       query: :class:`str`
-          The query of the RTFS.
+          The query of the RTFS that you want to search for.
       library: :class:`str`
           The library that you need to search for.
-      format: :class:`str` = \"links\"
-          The format of the RTFS. Either `soruce`
+      format: :class:`str`
+          The format of the RTFS. Either `soruce` or `links`. Defaults to `links`.
       """
-      library = find(lambda m: library.lower() in m.lower(), ["discord.py", "twitchio", "wavelink", "aiohttp"])
-      format = find(lambda m: format.lower() in m.lower(), ["links", "source"])
-      if not format:
-        raise BadArgument({'argument': ''})
+      lib = find(lambda m: library.lower() in m.lower(), ["discord.py", "twitchio", "wavelink", "aiohttp"])
+      if not lib:
+        raise BadArgument('library', 'discord.py/twitchio/wavelink/aiohttp', str(library))
+      library = lib
+      fr = find(lambda m: format.lower() in m.lower(), ["links", "source"])
+      if not fr:
+        raise BadArgument('format', 'links/source', str(format))
+      format = fr
       params = {
         "query": query,
         "library": library,
@@ -120,6 +139,7 @@ class IDevision:
         async with sess.get(f"{baseURL}/api/public/rtfs", params=params) as resp:
           self = resp
           r = resp
+      await sess.close()
       self.query = query
       self.format = format
       self.params = params
@@ -142,9 +162,53 @@ class IDevision:
       return self.js["query_time"]
   
   class rtfm:
-    async def __init__(self, query : str):
+    async def __init__(self, query : str, uri : str, *, show_labels : bool = True, label_labels = False):
       """
       |coro|
       
-      A Helper
+      A helper for the RTFM API.
+      
+      Parameters
+      -----------
+      query: :class:`str`
+        The query of the RTFM that you want to search for.
+      uri: :class:`str`
+        The URL/URI of the documentation. This can be any sphinx generated documentation. Ex. https://discordpy.readthedocs.io/en/latest.
+      show_labels: :class:`bool`
+        Configures the labels. When False, labels will not be returned in the results. Defaults to True.
+      label_labels: :class:`bool`
+        When True, labels will have label: prepended to them. Does nothing when show-labels is False. Defaults to False
       """
+      params = {
+        "query": query,
+        "location": uri,
+        "show-labels": show_labels,
+        "label-labels": label_labels
+      }
+      async with aiohttp.ClientSession() as sess:
+        async with sess.get(f"{baseURL}/api/public/rtfm", params=params) as resp:
+          self = resp
+          r = resp
+      await sess.close()
+      self.query = query
+      self.show_labels = show_labels
+      self.params = params
+      self.uri = uri
+      self.label_labels = label_labels
+      self.js = await r.json()
+      
+    @property
+    def nodes(self) -> dict:
+      """
+      Returns a dict of the node name and URL/Source. 
+      The dict will be in the format {"Node Name": "URL/Source of Documentation."}
+      """
+      return self.js["nodes"]
+    
+    @property
+    def query_time(self) -> str:
+      '''
+      Returns a string of the query time. E.g "1.0".
+      '''
+      return self.js["query_time"]
+      
