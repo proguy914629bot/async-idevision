@@ -89,6 +89,7 @@ class IDevision:
     self.docs = "https://idevision.net/docs"
     self.baseURL = basseURL
     Token = token
+    self.error_codes = errorCodes
     
   class rtfs:
     async def __init__(self, query : str, library : str, *, format : str = "links"):
