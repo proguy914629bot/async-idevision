@@ -27,12 +27,14 @@ import aiohttp
 errorCodes = {
   "503": "Service Unavailable",
   "500": "Internal Server Error",
-  "200": "Ok",
+  "200": "Ok.",
   "400": "Bad Request.",
   "401": "Bad Authorization/Unauthorized.",
   "404": "Not found.",
   "403": "Banned.",
-  "429": "Ratelimited."
+  "429": "Ratelimited.",
+  "201": "Ok.",
+  "204": "Ok."
 }
 
 def find(predicate, seq):
