@@ -24,6 +24,17 @@ SOFTWARE.
 
 import aiohttp
 
+errorCodes = {
+  "503": "Service Unavailable",
+  "500": "Internal Server Error",
+  "200": "Ok",
+  "400": "Bad Request.",
+  "401": "Bad Authorization/Unauthorized.",
+  "404": "Not found.",
+  "403": "Banned.",
+  "429": "Ratelimited."
+}
+
 def find(predicate, seq):
   for element in seq:
     if predicate(element):
@@ -46,9 +57,20 @@ class Ratelimit(IDevisionException):
   
 class Banned(Ratelimit):
   """An Exception when you are Banned from the API. This is a subclass of idevision.Ratelimit."""
+  def __init__(self):
+    return super().__init__("You are banned from IDevision API. You have recieved a  error code.")
   
 class BadRequest(IDevisionException):
-  """An Exception when the API has a Bad Request. This is a subclass of idevision.IDevisionException"""
+  """An Exception when the API has raised a Bad Request. This is a subclass of idevision.IDevisionException"""
+  
+class BadArgument(IDevisionException):
+  """An Exception when there is a bad argument to a parameter. This is a subclass of idevision.IDevisionException"""
+  def __init__(self, argument, expectedVal, inputVal):
+    return super().__init__(
+      "A bad argument was raised in parameter {}. Expected value {} but got {} instead.".format(
+        str(argument), str(expectedVal), str(inputVal)
+      )
+    )
 
 class IDevision:
   def __init__(self, token : str = ""):
@@ -72,9 +94,20 @@ class IDevision:
       |coro|
       
       A helper for the RTFS API.
+      
+      Parameters
+      -----------
+      query: :class:`str`
+          The query of the RTFS.
+      library: :class:`str`
+          The library that you need to search for.
+      format: :class:`str` = \"links\"
+          The format of the RTFS. Either `soruce`
       """
       library = find(lambda m: library.lower() in m.lower(), ["discord.py", "twitchio", "wavelink", "aiohttp"])
       format = find(lambda m: format.lower() in m.lower(), ["links", "source"])
+      if not format:
+        raise BadArgument({'argument': ''})
       params = {
         "query": query,
         "library": library,
@@ -105,5 +138,10 @@ class IDevision:
       '''
       return self.js["query_time"]
   
-  #class rtfm:
-    #async def __init__(self, query : str)
+  class rtfm:
+    async def __init__(self, query : str):
+      """
+      |coro|
+      
+      A Helper
+      """
