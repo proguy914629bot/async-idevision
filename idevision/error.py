@@ -21,6 +21,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+errorCodes = {
+  "503": "Service Unavailable",
+  "500": "Internal Server Error",
+  "200": "Ok.",
+  "400": "Bad Request.",
+  "401": "Bad Authorization/Unauthorized.",
+  "404": "Not found.",
+  "403": "Banned.",
+  "429": "Ratelimited.",
+  "201": "Ok.",
+  "204": "Ok."
+}
+
 class IDevisionException(Exception):
   """A Global Exception for the IDevision API."""
   def __init__(self, *args, **kwargs):
