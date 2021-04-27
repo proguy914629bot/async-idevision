@@ -25,4 +25,4 @@ SOFTWARE.
 from .errors import *
 from .core import IDevision
 
-__version__ = "0.9.3.3"
+__version__ = "0.9.3.3-beta"
