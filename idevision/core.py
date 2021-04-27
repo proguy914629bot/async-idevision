@@ -23,6 +23,8 @@ SOFTWARE.
 """
 
 import aiohttp
+from .errors import *
+
 def find(predicate, seq):
   for element in seq:
     if predicate(element):
@@ -50,10 +52,11 @@ class IDevision:
     self.error_codes = errorCodes
     
   def documentation(self):
-    def idevision():
-      return "https://idevision.net/docs"
-    def async_idevison():
-      return "https://github.com/proguy914629bot/async-idevision/blob/main/DOCUMENTATION.md"
+    #def idevision():
+      #return "https://idevision.net/docs"
+    #def async_idevison():
+      #return "https://github.com/proguy914629bot/async-idevision/blob/main/DOCUMENTATION.md"
+    return f"{baseURL}/docs"
     
   class rtfs:
     async def __init__(self, query : str, library : str, *, format : str = "links"):
@@ -86,7 +89,15 @@ class IDevision:
       }
       async with aiohttp.ClientSession() as sess:
         async with sess.get(f"{baseURL}/api/public/rtfs", params=params) as resp:
-          self = resp
+          errorCode, errorException = errorCodes.get(str(resp.status), ("", None))
+          if error is not None:
+            if isinstance(errorException, BadAuthorization):
+              raise BadAuthorization("rtfs")
+            elif isinstance(errorException, NotFound):
+              raise NotFound(f"{baseURL}/api/public/rtfs")
+            else:
+              raise errorException()
+          self.result = resp
           r = resp
       await sess.close()
       self.query = query
@@ -136,7 +147,15 @@ class IDevision:
       }
       async with aiohttp.ClientSession() as sess:
         async with sess.get(f"{baseURL}/api/public/rtfm", params=params) as resp:
-          self = resp
+          errorCode, errorException = errorCodes.get(str(resp.status), ("", None))
+          if error is not None:
+            if isinstance(errorException, BadAuthorization):
+              raise BadAuthorization("rtfm")
+            elif isinstance(errorException, NotFound):
+              raise NotFound(f"{baseURL}/api/public/rtfm")
+            else:
+              raise errorException()
+          self.result = resp
           r = resp
       await sess.close()
       self.query = query
