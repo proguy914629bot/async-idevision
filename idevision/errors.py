@@ -72,7 +72,6 @@ class BadArgument(IDevisionException):
   def __init__(self, argument, expectedVal, inputVal):
     super().__init__(
       "A bad argument was raised in parameter %s. Expected value %u but got %s instead." % (argument, expectedVal, inputVal)
-      )
     )
   
 class ServiceUnavailable(IDevisionException):
