@@ -22,19 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-errorCodes = {
-  "503": ("Service Unavailable", ServiceUnavailable),
-  "500": ("Internal Server Error", InternalServerError),
-  "200": ("Ok.", None),
-  "400": ("Bad Request.", BadRequest),
-  "401": ("Bad Authorization/Unauthorized.", BadAuthorization),
-  "404": ("Not found.", NotFound),
-  "403": ("Banned.", Banned),
-  "429": ("Ratelimited.", Ratelimit),
-  "201": ("Ok.", None),
-  "204": ("Ok.", None)
-}
-
 class IDevisionException(Exception):
   """A Global Exception for the IDevision API."""
   def __init__(self, *args, **kwargs):
@@ -83,3 +70,16 @@ class NotFound(IDevisionException):
     """An Exception when the IDevision API returns a 404 Status Code."""
     def __init__(self, url : str):
       super().__init__("URL %s Not Found. API Returned a 404 Status Code." % url)
+
+errorCodes = {
+  "503": ("Service Unavailable", ServiceUnavailable),
+  "500": ("Internal Server Error", InternalServerError),
+  "200": ("Ok.", None),
+  "400": ("Bad Request.", BadRequest),
+  "401": ("Bad Authorization/Unauthorized.", BadAuthorization),
+  "404": ("Not found.", NotFound),
+  "403": ("Banned.", Banned),
+  "429": ("Ratelimited.", Ratelimit),
+  "201": ("Ok.", None),
+  "204": ("Ok.", None)
+}
